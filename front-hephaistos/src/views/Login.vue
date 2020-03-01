@@ -61,6 +61,7 @@ export default {
       try {
         const result = await this.axios.post(config.host + '/api/v1/login', params, { headers })
         this.user = result.data
+        alert(result.data)
         this.loggedIn = true
       } catch (err) {
         this.form.errorLogin = 'Error your email or password are incorrect'

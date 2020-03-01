@@ -1,7 +1,7 @@
 import Vue from 'vue'
 import axios from 'axios'
 import VueRouter from 'vue-router'
-import Home from '../views/Home.vue'
+// import Home from '../views/Home.vue'
 import config from '../config'
 
 Vue.use(VueRouter)
@@ -14,7 +14,7 @@ function createRouter (state) {
       next()
     } catch (err) {
       console.log('err', err)
-      next('/login') // redirect to login if user is not authenticated
+      next('/login')
     }
   }
   // the function continues in the second panel, not enough space here
@@ -22,7 +22,8 @@ function createRouter (state) {
     {
       path: '/home',
       name: 'home',
-      component: Home,
+      component: import(/* webpackChunkName: "home" */ '../views/Home.vue'),
+      // component: Home,
       beforeEnter // notice this new property
     },
     {
@@ -31,7 +32,8 @@ function createRouter (state) {
       // route level code-splitting
       // this generates a separate chunk (about.[hash].js) for this route
       // which is lazy-loaded when the route is visited.
-      component: () => import(/* webpackChunkName: "about" */ '../views/CreateUpdateexercise.vue')
+      component: () => import(/* webpackChunkName: "exercise" */ '../views/CreateUpdateexercise.vue'),
+      beforeEnter
     },
     {
       path: '/about',
