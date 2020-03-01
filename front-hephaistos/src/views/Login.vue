@@ -37,6 +37,8 @@
 </template>
 
 <script>
+import config from '../config'
+
 export default {
   data () {
     return {
@@ -52,17 +54,17 @@ export default {
     async onSubmit (evt) {
       evt.preventDefault()
       const { email, password } = this.form
+      const params = new URLSearchParams()
+      params.append('username', email)
+      params.append('password', password)
+      const headers = { 'Content-Type': 'application/x-www-form-urlencoded' }
       try {
-        console.log('ee')
-        const result = await this.axios.post('/api/login', {
-          email,
-          password
-        })
+        const result = await this.axios.post(config.host + '/api/v1/login', params, { headers })
         this.user = result.data
         this.loggedIn = true
-        alert(this.loggedIn)
       } catch (err) {
         this.form.errorLogin = 'Error your email or password are incorrect'
+        this.form.errorLogin = 'tt ' + err
       }
     }
   }
