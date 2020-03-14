@@ -1,44 +1,34 @@
 <template>
   <div class="login">
-    <b-card title="Login">
+    <v-card>
+      <v-card-title>Login</v-card-title>
       <span>{{ form.errorLogin }}</span>
-      <b-form @submit="onSubmit" v-if="true">
-        <b-form-group
-          id="input-group-email"
-          label="Email address:"
-          label-for="input-email"
-          description=""
-        >
-          <b-form-input
-            id="input-email"
-            v-model="form.email"
-            type="email"
-            required
-            placeholder="Enter email"
-          ></b-form-input>
-        </b-form-group>
+      <v-form
+        ref="onSubmit"
+        v-model="valid"
+      >
+        <v-text-field
+          v-model="form.email"
+          label="Email address"
+          required
+        ></v-text-field>
 
-        <b-form-group id="input-group-password" label="Your Password:" label-for="input-password">
-          <b-form-input
-            id="input-password"
-            v-model="form.password"
-            required
-            placeholder="Enter password"
-          ></b-form-input>
-        </b-form-group>
-
-        <b-button type="submit" variant="primary">Submit</b-button>
-      </b-form>
-    </b-card>
-    <b-card class="mt-3" header="Form Data Result">
-      <pre class="m-0">{{ form }}</pre>
-    </b-card>
+        <v-text-field
+          v-model="form.password"
+          label="Password"
+          :type="'password'"
+          required
+        ></v-text-field>
+        <b-button @click="onSubmit" variant="primary">Submit</b-button>
+      </v-form>
+    </v-card>
   </div>
 </template>
 
 <script>
-import config from '../config'
-
+import store from '../store/index'
+import { mapState, mapActions } from 'vuex'
+// mapGetters
 export default {
   data () {
     return {
@@ -50,23 +40,24 @@ export default {
       show: true
     }
   },
+  computed: {
+    ...mapState('user', ['user'])
+  },
   methods: {
+    ...mapActions('user', ['login']),
     async onSubmit (evt) {
       evt.preventDefault()
       const { email, password } = this.form
-      const params = new URLSearchParams()
-      params.append('username', email)
-      params.append('password', password)
-      const headers = { 'Content-Type': 'application/x-www-form-urlencoded' }
-      try {
-        const result = await this.axios.post(config.host + '/api/v1/login', params, { headers })
-        this.user = result.data
-        alert(result.data)
-        this.loggedIn = true
-      } catch (err) {
-        this.form.errorLogin = 'Error your email or password are incorrect'
-        this.form.errorLogin = 'tt ' + err
-      }
+      await this.login({ email, password })
+        .then(res => {
+          if (!store.getters['user/isAuthenticated']) {
+            this.form.errorLogin = 'Votre email et/ou mot de passe est incorrect'
+          }
+        })
+        .catch(error => {
+          console.log(error)
+          this.form.errorLogin = 'Votre email et/ou mot de passe est incorrect'
+        })
     }
   }
 }
@@ -74,11 +65,14 @@ export default {
 
 <style>
   .login{
-    max-width: 1000px;
+    width: 1000px;
     margin: auto;
     text-align: left;
   }
-  span{
+  span {
     color: red;
+  }
+  v-form {
+    margin: 10px;
   }
 </style>

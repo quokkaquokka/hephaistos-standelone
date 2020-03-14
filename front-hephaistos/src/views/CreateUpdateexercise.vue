@@ -38,7 +38,7 @@
             <b-form @submit="onSandbox" v-if="true">
             <h1 style="display:inline-block; width: 200px">Sandbox</h1>
             <b-button type="submit" variant="primary" style="display:inline-block">Submit</b-button>
-            <div id="sandbox" class="exercise-editor-ace-editor"></div>
+            <div id="sandbox" class="exercise-editor-ace-editor" ></div>
             <h1>Résultats des tests</h1>
             <ul id="listResult">
               <li v-for="item in form.resultTest" v-bind:key="item">
@@ -50,9 +50,6 @@
         </b-row>
         <b-button type="submit" variant="primary">Submit</b-button>
       </b-form>
-    </b-card>
-    <b-card class="mt-3" header="Form Data Result">
-      <pre class="m-0">{{ form }}</pre>
     </b-card>
   </div>
 </template>
@@ -111,6 +108,7 @@ export default {
       try {
         const result = await this.axios.post(config.host + '/api/v1/exercise/sandbox', params, { headers })
         this.form.resultTest = result.data.result.tests
+        this.form.debug = result.data
       } catch (err) {
       }
     },
@@ -129,19 +127,6 @@ export default {
         score: 0,
         creation_date: new Date()
       }
-
-      // const data = {
-      //   instructions: 'write a simple loop in python',
-      //   lang: 'python',
-      //   title: 'loop python',
-      //   tests: '#def',
-      //   solution: '#def solution',
-      //   template_regions: ['France'],
-      //   template_regions_rw: [0],
-      //   difficulty: 0,
-      //   score: 0,
-      //   creation_date: new Date()
-      // }
       try {
         const result = await this.axios.post(config.host + '/api/v1/exercise', data, { headers })
         this.debug = result.data

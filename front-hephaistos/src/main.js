@@ -2,10 +2,12 @@ import Vue from 'vue'
 import App from './App.vue'
 import axios from 'axios'
 import VueAxios from 'vue-axios'
-import createRouter from './router'
+import router from './router'
 import { BootstrapVue, IconsPlugin } from 'bootstrap-vue'
 import 'bootstrap/dist/css/bootstrap.css'
 import 'bootstrap-vue/dist/bootstrap-vue.css'
+import store from './store/index'
+import vuetify from './plugins/vuetify'
 
 axios.defaults.withCredentials = true
 Vue.use(VueAxios, axios)
@@ -14,12 +16,11 @@ Vue.use(IconsPlugin)
 
 Vue.config.productionTip = false
 
-const state = {
-  user: {}
-}
-
 new Vue({
-  data: state,
-  router: createRouter(state),
+  store,
+  router,
+  vuetify,
   render: h => h(App)
 }).$mount('#app')
+
+// vuetify
